@@ -279,6 +279,19 @@ const MainPage = () => {
     } catch (err) { }
   };
 
+
+  /* =========================
+     LOADING SCREEN
+  ========================= */
+
+  if (isLoading) {
+    return (
+      <div className="center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   /* =========================
      JSX
   ========================= */
@@ -286,11 +299,11 @@ const MainPage = () => {
     <>
       <ErrorModal error={error} onClear={clearError} />
 
-      {isLoading && (
+      {/* {isLoading && (
         <div className="center">
           <LoadingSpinner />
         </div>
-      )}
+      )} */}
 
       <div className="main-container">
         {/* PLANTS LIST */}
