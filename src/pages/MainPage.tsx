@@ -49,10 +49,10 @@ const MainPage = () => {
   useEffect(() => {
     const fetchMap = async () => {
       try {
-        const responseData = (await sendRequest(
+        const responseData = await sendRequest<{ map: MapType }>(
           `${import.meta.env.VITE_BACKEND_URL}/api/maps`,
           "GET"
-        )) as { map: MapType };
+        );
 
         setMap(responseData.map);
       } catch (err) {}
@@ -77,10 +77,10 @@ const MainPage = () => {
   useEffect(() => {
     const fetchPlants = async () => {
       try {
-        const responseData = (await sendRequest(
+        const responseData = await sendRequest<{ plantsList: Plant[] }>(
           `${import.meta.env.VITE_BACKEND_URL}/api/plants`,
           "GET"
-        )) as { plantsList: Plant[] };
+        );
         setPlants(responseData.plantsList);
       } catch (err) {}
     };
@@ -105,7 +105,7 @@ const MainPage = () => {
   ========================= */
   const createPlantHandler = async (plantData: Plant) => {
     try {
-      const responseData = (await sendRequest(
+      const responseData = await sendRequest<{ plant: Plant }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/plants/createplant`,
         "POST",
         JSON.stringify({
@@ -118,7 +118,7 @@ const MainPage = () => {
         {
           "Content-Type": "application/json",
         }
-      )) as { plant: Plant };
+      );
 
       upsertPlantHandler(responseData.plant);
       setShowAddItem(false);
@@ -130,7 +130,7 @@ const MainPage = () => {
   ========================= */
   const updatePlantHandler = async (plantData: Plant) => {
     try {
-      const responseData = (await sendRequest(
+      const responseData = await sendRequest<{ plant: Plant }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/plants/${plantData.id}`,
         "PATCH",
         JSON.stringify({
@@ -145,7 +145,7 @@ const MainPage = () => {
         {
           "Content-Type": "application/json",
         }
-      )) as { plant: Plant };
+      );
 
       upsertPlantHandler(responseData.plant);
     } catch (err) {}
@@ -177,7 +177,7 @@ const MainPage = () => {
   ========================= */
   const updateMapHandler = async (updatedSquares: number[]) => {
     try {
-      const responseData = (await sendRequest(
+      const responseData = await sendRequest<{ map: MapType }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/maps/editmap`,
         "PATCH",
         JSON.stringify({
@@ -186,7 +186,7 @@ const MainPage = () => {
         {
           "Content-Type": "application/json",
         }
-      )) as { map: MapType };
+      );
 
       setMap(responseData.map);
       setSelectedSquares(responseData.map.selectedSquares);
@@ -237,7 +237,7 @@ const MainPage = () => {
 
     try {
       //  PATCH to backend using the correct _id
-      const responseData = await sendRequest(
+      const responseData = await sendRequest<{ plant: Plant }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/plants/${
           plant._id ?? plant.id
         }`,
@@ -249,7 +249,7 @@ const MainPage = () => {
         {
           "Content-Type": "application/json",
         }
-      ) as { plant: Plant };
+      );
 
       //  Update frontend state
       upsertPlantHandler(responseData.plant);
@@ -266,7 +266,7 @@ const MainPage = () => {
     if (!plant) return;
 
     try {
-      const responseData = (await sendRequest(
+      const responseData = await sendRequest<{ plant: Plant }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/plants/${
           plant._id ?? plant.id
         }`,
@@ -278,7 +278,7 @@ const MainPage = () => {
         {
           "Content-Type": "application/json",
         }
-      )) as { plant: Plant };
+      );
 
       upsertPlantHandler(responseData.plant);
     } catch (err) {}
