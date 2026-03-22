@@ -1,18 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 
 import "./EditMap.css";
 import { daysUntilNextWatering } from "./util/days";
+import { Plant as PlantType } from "../types/plant";
+import { MapType } from "../types/map";
 
-const EditMap = (props) => {
+interface EditMapProps {
+  DUMMY_MAP: MapType;
+  plants: PlantType[];
+  selectedSquares: number[];
+  squareClickHandler: (index: number) => void;
+  submitMapHandler: () => void;
+  mapCancelHandler: () => void;
+  mapResetHandler: () => void;
+  onPlantDrop: (squareIndex: number, plantId: string) => void;
+  onRemovePlant: (squareIndex: number) => void;
+}
+
+const EditMap: React.FC<EditMapProps> = (props) => {
   const columnsNumber = props.DUMMY_MAP.columnsNumber;
   const SquaresNumber = Math.pow(columnsNumber, 2);
 
   //drag&drop:
-  const allowDrop = (e) => {
+  const allowDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
-  const onDrop = (e, squareIndex) => {
+  const onDrop = (e: React.DragEvent<HTMLDivElement>, squareIndex: number) => {
     e.preventDefault();
     const plantId = e.dataTransfer.getData("plantId");
 
@@ -23,7 +37,7 @@ const EditMap = (props) => {
     <>
       <div
         className="map-container-edit"
-        style={{ "--columns-number": columnsNumber }}
+        style={{ "--columns-number": columnsNumber } as React.CSSProperties}
       >
         {/* MAP GRID */}
         {Array.from({ length: SquaresNumber }, (_, i) => {
@@ -64,7 +78,7 @@ const EditMap = (props) => {
               {plant && (
                 <div
                   className="logo-option-map"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.stopPropagation(); // prevent square select
                     props.onRemovePlant(index);
                   }}
@@ -111,7 +125,7 @@ const EditMap = (props) => {
                 className="logo-option"
                 //drag&drop:
                 draggable
-                onDragStart={(e) => {
+                onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
                   e.dataTransfer.setData("plantId", plant.id);
                 }}
                 // onClick={() => { props.onSelect(plant.img); }}

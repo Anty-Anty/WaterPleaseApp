@@ -9,6 +9,9 @@ import LoadingSpinner from "../components/UIElements/LoadingSpinner";
 import ErrorModal from "../components/UIElements/ErrorModal";
 import { useHttpClient } from "../components/hooks/http-hook";
 
+import type { Plant } from "../types/plant";
+import type { MapType } from "../types/map";
+
 import "./MainPage.css";
 
 const MainPage = () => {
@@ -20,25 +23,25 @@ const MainPage = () => {
   const [showAddItem, setShowAddItem] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditMap, setShowEditMap] = useState(false);
-  const [editingPlantId, setEditingPlantId] = useState(null);
-  const [deletingPlantId, setDeletingPlantId] = useState(null);
+  const [editingPlantId, setEditingPlantId] = useState<string | null>(null);
+  const [deletingPlantId, setDeletingPlantId] = useState<string | null>(null);
 
   /* =========================
      DATA STATE
   ========================= */
-  const [plants, setPlants] = useState([]);
+  const [plants, setPlants] = useState<Plant[]>([]);
 
   // console.log(plants);
 
-  const [map, setMap] = useState({
+  const [map, setMap] = useState<MapType>({
     columnsNumber: 0,
     selectedSquares: [],
   });
 
   // selected squares state
-  const [selectedSquares, setSelectedSquares] = useState([]);
+  const [selectedSquares, setSelectedSquares] = useState<number[]>([]);
   // temp state while editing map
-  const [tempSelectedSquares, setTempSelectedSquares] = useState([]);
+  const [tempSelectedSquares, setTempSelectedSquares] = useState<number[]>([]);
 
   /* =========================
      FETCH MAP
@@ -46,13 +49,13 @@ const MainPage = () => {
   useEffect(() => {
     const fetchMap = async () => {
       try {
-        const responseData = await sendRequest(
+        const responseData = await sendRequest<{ map: MapType }>(
           `${import.meta.env.VITE_BACKEND_URL}/api/maps`,
           "GET"
         );
 
         setMap(responseData.map);
-      } catch (err) { }
+      } catch (err) {}
     };
 
     fetchMap();
@@ -74,12 +77,12 @@ const MainPage = () => {
   useEffect(() => {
     const fetchPlants = async () => {
       try {
-        const responseData = await sendRequest(
+        const responseData = await sendRequest<{ plantsList: Plant[] }>(
           `${import.meta.env.VITE_BACKEND_URL}/api/plants`,
           "GET"
         );
         setPlants(responseData.plantsList);
-      } catch (err) { }
+      } catch (err) {}
     };
 
     fetchPlants();
@@ -88,7 +91,7 @@ const MainPage = () => {
   /* =========================
      PLANTS CRUD (LOCAL UI)
   ========================= */
-  const upsertPlantHandler = (plantData) => {
+  const upsertPlantHandler = (plantData: Plant) => {
     setPlants((prev) => {
       const exists = prev.some((p) => p.id === plantData.id);
       return exists
@@ -100,9 +103,9 @@ const MainPage = () => {
   /* =========================
      PLANT CREATE API
   ========================= */
-  const createPlantHandler = async (plantData) => {
+  const createPlantHandler = async (plantData: Plant) => {
     try {
-      const responseData = await sendRequest(
+      const responseData = await sendRequest<{ plant: Plant }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/plants/createplant`,
         "POST",
         JSON.stringify({
@@ -119,15 +122,15 @@ const MainPage = () => {
 
       upsertPlantHandler(responseData.plant);
       setShowAddItem(false);
-    } catch (err) { }
+    } catch (err) {}
   };
 
   /* =========================
      PLANT UPDATE API
   ========================= */
-  const updatePlantHandler = async (plantData) => {
+  const updatePlantHandler = async (plantData: Plant) => {
     try {
-      const responseData = await sendRequest(
+      const responseData = await sendRequest<{ plant: Plant }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/plants/${plantData.id}`,
         "PATCH",
         JSON.stringify({
@@ -145,7 +148,7 @@ const MainPage = () => {
       );
 
       upsertPlantHandler(responseData.plant);
-    } catch (err) { }
+    } catch (err) {}
   };
 
   /* =========================
@@ -162,21 +165,19 @@ const MainPage = () => {
       );
 
       // remove plant from local state
-      setPlants(prev =>
-        prev.filter(plant => plant.id !== deletingPlantId)
-      );
+      setPlants((prev) => prev.filter((plant) => plant.id !== deletingPlantId));
 
       setShowDeleteModal(false);
       setDeletingPlantId(null);
-    } catch (err) { }
+    } catch (err) {}
   };
 
   /* =========================
      MAP PATCH API
   ========================= */
-  const updateMapHandler = async (updatedSquares) => {
+  const updateMapHandler = async (updatedSquares: number[]) => {
     try {
-      const responseData = await sendRequest(
+      const responseData = await sendRequest<{ map: MapType }>(
         `${import.meta.env.VITE_BACKEND_URL}/api/maps/editmap`,
         "PATCH",
         JSON.stringify({
@@ -189,7 +190,7 @@ const MainPage = () => {
 
       setMap(responseData.map);
       setSelectedSquares(responseData.map.selectedSquares);
-    } catch (err) { }
+    } catch (err) {}
   };
 
   /* =========================
@@ -200,7 +201,7 @@ const MainPage = () => {
     setShowEditMap(true);
   };
 
-  const squareClickHandler = (squareId) => {
+  const squareClickHandler = (squareId: number) => {
     setTempSelectedSquares((prev) =>
       prev.includes(squareId)
         ? prev.filter((id) => id !== squareId)
@@ -225,7 +226,7 @@ const MainPage = () => {
   /* =========================
    DRAG & DROP (PERSISTED)
 ========================= */
-  const plantDropHandler = async (squareIndex, plantId) => {
+  const plantDropHandler = async (squareIndex: number, plantId: string) => {
     //  Ensure the plant exists in state
     const plant = plants.find((p) => p.id === plantId);
 
@@ -236,8 +237,10 @@ const MainPage = () => {
 
     try {
       //  PATCH to backend using the correct _id
-      const responseData = await sendRequest(
-        `${import.meta.env.VITE_BACKEND_URL}/api/plants/${plant._id}`,
+      const responseData = await sendRequest<{ plant: Plant }>(
+        `${import.meta.env.VITE_BACKEND_URL}/api/plants/${
+          plant._id ?? plant.id
+        }`,
         "PATCH",
         JSON.stringify({
           mapPosition: squareIndex,
@@ -258,13 +261,15 @@ const MainPage = () => {
   /* =========================
    REMOVE PLANT FROM MAP
 ========================= */
-  const removePlantFromSquare = async (squareIndex) => {
+  const removePlantFromSquare = async (squareIndex: number) => {
     const plant = plants.find((p) => p.mapPosition === squareIndex);
     if (!plant) return;
 
     try {
-      const responseData = await sendRequest(
-        `${import.meta.env.VITE_BACKEND_URL}/api/plants/${plant.id}`,
+      const responseData = await sendRequest<{ plant: Plant }>(
+        `${import.meta.env.VITE_BACKEND_URL}/api/plants/${
+          plant._id ?? plant.id
+        }`,
         "PATCH",
         JSON.stringify({
           mapPosition: null,
@@ -276,9 +281,8 @@ const MainPage = () => {
       );
 
       upsertPlantHandler(responseData.plant);
-    } catch (err) { }
+    } catch (err) {}
   };
-
 
   /* =========================
      LOADING SCREEN
@@ -309,7 +313,6 @@ const MainPage = () => {
         {/* PLANTS LIST */}
         <div className="plants-list">
           <div className="plants-list-container">
-            
             <div className="plants-list-item">
               <div></div>
               <div></div>
@@ -323,7 +326,7 @@ const MainPage = () => {
               plants={plants}
               editingPlantId={editingPlantId}
               setEditingPlantId={setEditingPlantId}
-              showDeleteModalHandler={(id) => {
+              showDeleteModalHandler={(id: string) => {
                 setDeletingPlantId(id);
                 setShowDeleteModal(true);
               }}
@@ -353,10 +356,7 @@ const MainPage = () => {
               onCancel={() => setShowDeleteModal(false)}
               footer={
                 <>
-                  <button
-                    type="button"
-                    onClick={deletePlantHandler}
-                  >
+                  <button type="button" onClick={deletePlantHandler}>
                     delete
                   </button>
                   <button

@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 
 import "./Map.css";
 import { daysUntilNextWatering } from "./util/days";
+import { Plant as PlantType } from "../types/plant";
+import { MapType } from "../types/map";
 
-const Map = (props) => {
+interface MapProps {
+  DUMMY_MAP: MapType;
+  selectedSquares: number[];
+  plants: PlantType[];
+  showEditMapHandler: () => void;
+}
+
+const Map: React.FC<MapProps> = (props) => {
   const columnsNumber = props.DUMMY_MAP.columnsNumber;
   const SquaresNumber = Math.pow(columnsNumber, 2);
 
@@ -11,7 +20,7 @@ const Map = (props) => {
     <>
       <div
         className="map-container"
-        style={{ "--columns-number": columnsNumber }}
+        style={{ "--columns-number": columnsNumber } as React.CSSProperties}
       >
         {/* MAP GRID */}
         {Array.from({ length: SquaresNumber }, (_, i) => {
