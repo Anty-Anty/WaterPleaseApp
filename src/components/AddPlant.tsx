@@ -123,7 +123,7 @@ const AddPlant: React.FC<AddPlantProps> = (props) => {
               availableLogos={logos}
               basename={"plant"}
               selectedLogo={selectedLogo}
-              onSelect={(logo: string) => {
+              onSelect={(logo) => {
                 setSelectedLogo(logo);
                 setShowLogoPicker(false);
               }}

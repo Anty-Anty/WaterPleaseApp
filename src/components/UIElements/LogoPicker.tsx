@@ -20,7 +20,7 @@ interface LogoPickerProps {
   availableLogos: LogoItem[];
   basename: string;
   selectedLogo: string | null;
-  onSelect: (img: number) => void;
+  onSelect: (img: string) => void;
 }
 
 const LogoPicker: React.FC<LogoPickerProps> = (props) => {
@@ -35,7 +35,7 @@ const LogoPicker: React.FC<LogoPickerProps> = (props) => {
               props.selectedLogo === String(plant.img) ? "selected" : ""
             }`}
             onClick={() => {
-              props.onSelect(plant.img);
+              props.onSelect(String(plant.img));
             }}
           >
             <img

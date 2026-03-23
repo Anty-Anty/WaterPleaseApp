@@ -144,7 +144,7 @@ const EditPlant: React.FC<EditPlantProps> = (props) => {
               availableLogos={logos}
               basename={"plant"}
               selectedLogo={selectedLogo}
-              onSelect={(logo: string) => {
+              onSelect={(logo) => {
                 setSelectedLogo(logo);
                 setShowLogoPicker(false);
               }}
@@ -245,7 +245,7 @@ const EditPlant: React.FC<EditPlantProps> = (props) => {
             readOnly
             initialDays={props.daysToNextWatering}
             // nextWateredDate={props.daysToNextWatering}
-            lastWateredDate={formState.inputs.lastWateredDate.value}
+            lastWateredDate={formState.inputs.lastWateredDate.value as string}
             validators={[VALIDATOR_REQUIRE(), VALIDATOR_MIN(1)]}
             errorText="Please enter at least 1 day."
             onInput={inputHandler}
