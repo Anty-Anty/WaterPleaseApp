@@ -1,18 +1,22 @@
 # WaterPleaseApp – Frontend
 
-A React-based frontend for managing indoor plants, visualizing their placement on a grid map, and tracking watering schedules.
+WaterPleaseApp is a full-stack web application for managing indoor plants, visualizing their placement on a grid map, and tracking watering schedules.
+
+Frontend: React + TypeScript  
+Backend: Node.js + Express + MongoDB
 
 Backend repository: https://github.com/Anty-Anty/WaterPleaseApp-backend
 
 ## Live demo
 https://waterpleaseapp.netlify.app
 
-⚠️ Cold start notice
+<!-- ⚠️ Cold start notice
 The backend is hosted on Render’s free tier.  
-Initial load may take up to ~60 seconds due to server cold start
+Initial load may take up to ~60 seconds due to server cold start -->
 
 ## Tech Stack
 - React (Vite)
+- TypeScript
 - CSS Modules / Custom CSS 
 - Custom Hooks:
     -`useHttpClient`
@@ -22,9 +26,7 @@ Initial load may take up to ~60 seconds due to server cold start
 
 ## Why I Built This
 
-I built this app to practice full-stack React patterns, custom hooks,
-state synchronization with a backend, and real-world UI edge cases
-such as drag & drop and mobile date picker inconsistencies.
+I built this app to practice full-stack React patterns, TypeScript, custom hooks, state synchronization with a backend, and real-world UI edge cases such as drag & drop and mobile date picker inconsistencies.
 
 ## Key Technical Decisions
 <details>
@@ -65,6 +67,12 @@ The frontend relies on consistent API responses and normalized identifiers, maki
 - Sync plant data across views
 - Update map positions independently
 - Extend the app with new features (e.g. multiple maps or rooms)
+
+### 8. TypeScript for Type Safety
+The entire frontend is written in TypeScript. Shared types (Plant, MapType) 
+are centralized in a /types folder and reused across components, hooks, and 
+API handlers. Discriminated unions are used for reducer actions and validator 
+types, ensuring exhaustive type checking and reducing runtime errors.
 
 </details>
 
